@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 
 import {
   agentHealth,
@@ -8,7 +11,77 @@ import {
   workflowSteps,
 } from "@/lib/mock-data";
 
+type UploadPreview = {
+  fileName: string;
+  headers: string[];
+  rowCount: number;
+  sampleRows: Record<string, string>[];
+};
+
+function parseCsv(text: string): UploadPreview | null {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length < 2) {
+    return null;
+  }
+
+  const headers = lines[0]
+    .split(",")
+    .map((header) => header.trim())
+    .filter(Boolean);
+
+  const sampleRows = lines.slice(1, 4).map((line) => {
+    const values = line.split(",");
+
+    return headers.reduce<Record<string, string>>((row, header, index) => {
+      row[header] = (values[index] ?? "").trim();
+      return row;
+    }, {});
+  });
+
+  return {
+    fileName: "uploaded-file.csv",
+    headers,
+    rowCount: Math.max(lines.length - 1, 0),
+    sampleRows,
+  };
+}
+
 export default function Home() {
+  const [uploadPreview, setUploadPreview] = useState<UploadPreview | null>(null);
+  const [uploadStatus, setUploadStatus] = useState("No CSV uploaded yet");
+
+  const uploadSummary = useMemo(() => {
+    if (!uploadPreview) {
+      return ["patient_id", "member_id", "risk_score", "care_gap_count"];
+    }
+
+    return uploadPreview.headers.slice(0, 4);
+  }, [uploadPreview]);
+
+  async function handleCsvUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const text = await file.text();
+    const preview = parseCsv(text);
+
+    if (!preview) {
+      setUploadPreview(null);
+      setUploadStatus("The CSV needs a header row and at least one data row.");
+      return;
+    }
+
+    setUploadPreview({ ...preview, fileName: file.name });
+    setUploadStatus(`Loaded ${preview.rowCount} rows from ${file.name}`);
+  }
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(28,149,180,0.22),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(244,114,182,0.16),_transparent_24%),linear-gradient(180deg,_#071119_0%,_#0b1721_46%,_#0e1b28_100%)] text-slate-100">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:72px_72px] opacity-25" />
@@ -56,6 +129,64 @@ export default function Home() {
                 placeholders aligned to the MVP scope.
               </p>
             </div>
+
+            <section className="mt-8 rounded-3xl border border-cyan-400/20 bg-cyan-400/10 p-5">
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">CSV Upload Studio</h3>
+                  <p className="mt-1 text-sm leading-6 text-slate-300">
+                    Upload a claims, ADT, lab, or pharmacy CSV to preview the incoming healthcare data shape.
+                  </p>
+                </div>
+                <label className="inline-flex cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/15">
+                  <span>Choose CSV</span>
+                  <input accept=",.csv,text/csv" className="hidden" type="file" onChange={handleCsvUpload} />
+                </label>
+              </div>
+
+              <div className="mt-4 grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+                <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Status</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-200">{uploadStatus}</p>
+                  <div className="mt-4 space-y-2 text-sm text-slate-300">
+                    <p>
+                      <span className="text-slate-500">Expected fields:</span> {uploadSummary.join(", ")}
+                    </p>
+                    <p>
+                      <span className="text-slate-500">Demo flow:</span> parse, validate, normalize, score
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Preview</p>
+                  {uploadPreview ? (
+                    <div className="mt-3 space-y-3 text-sm text-slate-300">
+                      <p>
+                        <span className="text-slate-500">File:</span> {uploadPreview.fileName}
+                      </p>
+                      <p>
+                        <span className="text-slate-500">Rows:</span> {uploadPreview.rowCount}
+                      </p>
+                      <p>
+                        <span className="text-slate-500">Headers:</span> {uploadPreview.headers.join(", ")}
+                      </p>
+                      <div className="space-y-2">
+                        {uploadPreview.sampleRows.map((row, index) => (
+                          <div key={`${uploadPreview.fileName}-${index}`} className="rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-slate-300">
+                            {JSON.stringify(row)}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-sm leading-6 text-slate-400">
+                      Upload a CSV to see parsed rows and header inference here.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </section>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {overviewMetrics.map((metric) => (

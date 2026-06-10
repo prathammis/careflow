@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { agentFailures, agentHealth, promptVariants } from "@/lib/mock-data";
 
 export default function AgentsPage() {
@@ -10,6 +12,14 @@ export default function AgentsPage() {
           <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
             Demo monitoring views for runtime, cost, success rate, and prompt A/B comparisons.
           </p>
+          <div className="mt-4">
+            <Link
+              href="/traces"
+              className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10"
+            >
+              Open trace store
+            </Link>
+          </div>
         </header>
 
         <section className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">

@@ -19,6 +19,21 @@ export type WorkflowTraceDetail = WorkflowStep & {
   logs: string[];
 };
 
+export type TraceRun = {
+  id: string;
+  runLabel: string;
+  agent: string;
+  workflow: string;
+  prompt: string;
+  inputData: string;
+  output: string;
+  toolCalls: string[];
+  latency: string;
+  cost: string;
+  status: "success" | "warning" | "failed";
+  createdAt: string;
+};
+
 export type AgentHealth = {
   name: string;
   runtime: string;
@@ -273,5 +288,64 @@ export const workflowTraceDetails: WorkflowTraceDetail[] = [
       "Synthesized risk, gaps, and recommendation outputs into a narrative response.",
       "Returned a clinician-friendly explanation with supporting evidence.",
     ],
+  },
+];
+
+export const traceRuns: TraceRun[] = [
+  {
+    id: "trace-001",
+    runLabel: "Patient Analysis / Maria Thompson",
+    agent: "Data Extraction Agent",
+    workflow: "Patient Analysis Workflow",
+    prompt: "Parse uploaded claims and unify member identifiers across files.",
+    inputData: "claims.csv, admissions.csv, pharmacy.csv, labs.csv",
+    output: "12,104 records normalized with 98.7% schema match.",
+    toolCalls: ["CSV parser", "Field normalizer", "Schema validator"],
+    latency: "214 ms",
+    cost: "$0.009",
+    status: "success",
+    createdAt: "2026-06-10 08:42 UTC",
+  },
+  {
+    id: "trace-002",
+    runLabel: "Patient Analysis / Maria Thompson",
+    agent: "Risk Prediction Agent",
+    workflow: "Patient Analysis Workflow",
+    prompt: "Score hospitalization risk for active patients using the latest unified record.",
+    inputData: "Unified patient profile + recent encounters + medication gaps",
+    output: "1,284 high-risk patients identified for outreach.",
+    toolCalls: ["XGBoost inference", "Feature assembly", "Priority ranking"],
+    latency: "286 ms",
+    cost: "$0.018",
+    status: "success",
+    createdAt: "2026-06-10 08:43 UTC",
+  },
+  {
+    id: "trace-003",
+    runLabel: "Patient Analysis / Maria Thompson",
+    agent: "Care Gap Agent",
+    workflow: "Patient Analysis Workflow",
+    prompt: "Identify care gaps for preventive screening, adherence, and follow-up.",
+    inputData: "Risk-ranked patient roster and quality measure definitions",
+    output: "3,902 open gaps prioritized by clinical urgency.",
+    toolCalls: ["Quality measure matcher", "Adherence scorer", "Gap ranker"],
+    latency: "174 ms",
+    cost: "$0.011",
+    status: "success",
+    createdAt: "2026-06-10 08:44 UTC",
+  },
+  {
+    id: "trace-004",
+    runLabel: "Prompt Playground / Explanation v2",
+    agent: "AI Copilot Agent",
+    workflow: "Prompt Playground",
+    prompt: "Explain why the selected patient is high risk in clear, human-readable language.",
+    inputData: "Selected patient, workflow trace context, and care gap summary",
+    output: "Provided an evidence-based explanation with risk drivers.",
+    toolCalls: ["Trace retriever", "Patient context loader", "Narrative generator"],
+    latency: "412 ms",
+    cost: "$0.027",
+    status: "warning",
+    createdAt: "2026-06-10 08:46 UTC",
   },
 ];

@@ -164,19 +164,21 @@ export default function Home() {
               <div className="mt-4 space-y-3">
                 {recentPatients.map((patient) => (
                   <article key={patient.id} className="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="font-medium text-white">{patient.name}</p>
-                        <p className="text-sm text-slate-400">Patient {patient.id}</p>
-                      </div>
-                      <span className="rounded-full bg-rose-400/10 px-3 py-1 text-sm font-medium text-rose-200">
-                        Risk {patient.risk}
-                      </span>
-                    </div>
-                    <div className="mt-3 flex items-center justify-between text-sm text-slate-300">
-                      <span>{patient.gaps} open care gaps</span>
-                      <span>{patient.recommendation}</span>
-                    </div>
+                      <Link href={`/patients/${patient.id}`} className="block">
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className="font-medium text-white">{patient.name}</p>
+                            <p className="text-sm text-slate-400">Patient {patient.id}</p>
+                          </div>
+                          <span className="rounded-full bg-rose-400/10 px-3 py-1 text-sm font-medium text-rose-200">
+                            Risk {patient.risk}
+                          </span>
+                        </div>
+                        <div className="mt-3 flex items-center justify-between text-sm text-slate-300">
+                          <span>{patient.gaps} open care gaps</span>
+                          <span>{patient.recommendation}</span>
+                        </div>
+                      </Link>
                   </article>
                 ))}
               </div>

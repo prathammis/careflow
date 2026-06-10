@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { patientDetails } from "@/lib/mock-data";
 
 export default function PatientsPage() {
@@ -14,41 +16,43 @@ export default function PatientsPage() {
 
         <section className="mt-6 grid gap-4 lg:grid-cols-3">
           {patientDetails.map((patient) => (
-            <article key={patient.id} className="rounded-3xl border border-white/10 bg-slate-950/60 p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-lg font-semibold text-white">{patient.name}</p>
-                  <p className="text-sm text-slate-400">Patient {patient.id}</p>
+            <article key={patient.id} className="rounded-3xl border border-white/10 bg-slate-950/60 p-5 transition hover:border-cyan-400/30 hover:bg-slate-950/80">
+              <Link href={`/patients/${patient.id}`} className="block">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-lg font-semibold text-white">{patient.name}</p>
+                    <p className="text-sm text-slate-400">Patient {patient.id}</p>
+                  </div>
+                  <span className="rounded-full bg-rose-400/10 px-3 py-1 text-sm font-medium text-rose-200">
+                    Risk {patient.risk}
+                  </span>
                 </div>
-                <span className="rounded-full bg-rose-400/10 px-3 py-1 text-sm font-medium text-rose-200">
-                  Risk {patient.risk}
-                </span>
-              </div>
 
-              <dl className="mt-5 space-y-3 text-sm text-slate-300">
-                <div className="flex items-center justify-between gap-3">
-                  <dt className="text-slate-500">Primary condition</dt>
-                  <dd>{patient.primaryCondition}</dd>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <dt className="text-slate-500">Care team</dt>
-                  <dd>{patient.careTeam}</dd>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <dt className="text-slate-500">Last touchpoint</dt>
-                  <dd>{patient.lastTouchpoint}</dd>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <dt className="text-slate-500">Open gaps</dt>
-                  <dd>{patient.gaps}</dd>
-                </div>
-              </dl>
+                <dl className="mt-5 space-y-3 text-sm text-slate-300">
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="text-slate-500">Primary condition</dt>
+                    <dd>{patient.primaryCondition}</dd>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="text-slate-500">Care team</dt>
+                    <dd>{patient.careTeam}</dd>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="text-slate-500">Last touchpoint</dt>
+                    <dd>{patient.lastTouchpoint}</dd>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="text-slate-500">Open gaps</dt>
+                    <dd>{patient.gaps}</dd>
+                  </div>
+                </dl>
 
-              <p className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
-                {patient.explanation}
-              </p>
+                <p className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-slate-300">
+                  {patient.explanation}
+                </p>
 
-              <p className="mt-4 text-sm text-cyan-200">Recommended action: {patient.recommendation}</p>
+                <p className="mt-4 text-sm text-cyan-200">Recommended action: {patient.recommendation}</p>
+              </Link>
             </article>
           ))}
         </section>

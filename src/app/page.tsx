@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import {
   overviewMetrics,
@@ -50,14 +50,6 @@ function parseCsv(text: string): UploadPreview | null {
 export default function Home() {
   const [uploadPreview, setUploadPreview] = useState<UploadPreview | null>(null);
   const [uploadStatus, setUploadStatus] = useState("No CSV uploaded yet");
-
-  const uploadSummary = useMemo(() => {
-    if (!uploadPreview) {
-      return ["patient_id", "member_id", "risk_score", "care_gap_count"];
-    }
-
-    return uploadPreview.headers.slice(0, 4);
-  }, [uploadPreview]);
 
   async function handleCsvUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];

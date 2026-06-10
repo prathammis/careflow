@@ -11,6 +11,14 @@ export type WorkflowStep = {
   detail: string;
 };
 
+export type WorkflowTraceDetail = WorkflowStep & {
+  prompt: string;
+  response: string;
+  runtime: string;
+  cost: string;
+  logs: string[];
+};
+
 export type AgentHealth = {
   name: string;
   runtime: string;
@@ -192,5 +200,78 @@ export const traceEvents = [
     response: "Provided an evidence-based explanation with risk drivers.",
     runtime: "412 ms",
     cost: "$0.027",
+  },
+];
+
+export const workflowTraceDetails: WorkflowTraceDetail[] = [
+  {
+    name: "Data Extraction Agent",
+    status: "Validated 4 uploaded files",
+    detail: "Parsed CSV claims, normalized identifiers, and generated 12,104 unified patient profiles.",
+    prompt: "Parse uploaded claims and unify member identifiers across files.",
+    response: "12,104 records normalized with 98.7% schema match.",
+    runtime: "214 ms",
+    cost: "$0.009",
+    logs: [
+      "Ingested claims.csv, admissions.csv, pharmacy.csv, and labs.csv.",
+      "Applied field normalization for patient_id, member_id, and plan_id.",
+      "Produced structured patient profiles ready for downstream scoring.",
+    ],
+  },
+  {
+    name: "Risk Prediction Agent",
+    status: "94.1% model confidence",
+    detail: "XGBoost scored hospitalization and readmission risk for the active patient population.",
+    prompt: "Score hospitalization risk for active patients using the latest unified record.",
+    response: "1,284 high-risk patients identified for outreach.",
+    runtime: "286 ms",
+    cost: "$0.018",
+    logs: [
+      "Loaded the latest XGBoost model version v12.",
+      "Combined claims utilization, recent encounters, and medication gaps.",
+      "Produced ranked risk scores for patient prioritization.",
+    ],
+  },
+  {
+    name: "Care Gap Agent",
+    status: "1,021 actionable gaps",
+    detail: "Detected overdue screenings, medication adherence issues, and preventive care opportunities.",
+    prompt: "Identify care gaps for preventive screening, adherence, and follow-up.",
+    response: "3,902 open gaps prioritized by clinical urgency.",
+    runtime: "174 ms",
+    cost: "$0.011",
+    logs: [
+      "Matched quality measures against the active roster.",
+      "Flagged overdue HbA1c, blood pressure, and statin adherence gaps.",
+      "Ranked opportunities by urgency and outreach feasibility.",
+    ],
+  },
+  {
+    name: "Recommendation Agent",
+    status: "Ranked outreach queues",
+    detail: "Generated next-best actions with priority, expected impact, and recommended owner.",
+    prompt: "Recommend next-best outreach actions for the care team.",
+    response: "Outreach tasks assigned to care managers by priority.",
+    runtime: "192 ms",
+    cost: "$0.014",
+    logs: [
+      "Cross-checked patient risk, open gaps, and recency of touchpoints.",
+      "Suggested care manager outreach sequences and intervention types.",
+      "Prepared a prioritized action queue for the dashboard.",
+    ],
+  },
+  {
+    name: "AI Copilot Agent",
+    status: "Natural language answers ready",
+    detail: "Explains why patients are high risk and surfaces evidence behind each decision.",
+    prompt: "Explain why the selected patient is high risk in clear, human-readable language.",
+    response: "Provided an evidence-based explanation with risk drivers.",
+    runtime: "412 ms",
+    cost: "$0.027",
+    logs: [
+      "Pulled the selected patient and trace context from the workflow graph.",
+      "Synthesized risk, gaps, and recommendation outputs into a narrative response.",
+      "Returned a clinician-friendly explanation with supporting evidence.",
+    ],
   },
 ];

@@ -1,63 +1,12 @@
-const overviewMetrics = [
-  { label: "Total Patients", value: "18,420", delta: "+6.4%", tone: "text-cyan-300" },
-  { label: "High-Risk Patients", value: "1,284", delta: "+118 today", tone: "text-rose-300" },
-  { label: "Open Care Gaps", value: "3,902", delta: "-11.2%", tone: "text-amber-300" },
-  { label: "Active Workflows", value: "42", delta: "8 running now", tone: "text-emerald-300" },
-];
+import Link from "next/link";
 
-const workflowSteps = [
-  {
-    name: "Data Extraction Agent",
-    status: "Validated 4 uploaded files",
-    detail: "Parsed CSV claims, normalized identifiers, and generated 12,104 unified patient profiles.",
-  },
-  {
-    name: "Risk Prediction Agent",
-    status: "94.1% model confidence",
-    detail: "XGBoost scored hospitalization and readmission risk for the active patient population.",
-  },
-  {
-    name: "Care Gap Agent",
-    status: "1,021 actionable gaps",
-    detail: "Detected overdue screenings, medication adherence issues, and preventive care opportunities.",
-  },
-  {
-    name: "Recommendation Agent",
-    status: "Ranked outreach queues",
-    detail: "Generated next-best actions with priority, expected impact, and recommended owner.",
-  },
-  {
-    name: "AI Copilot Agent",
-    status: "Natural language answers ready",
-    detail: "Explains why patients are high risk and surfaces evidence behind each decision.",
-  },
-];
-
-const agentHealth = [
-  { name: "Risk Prediction", runtime: "286 ms", cost: "$0.018", success: "99.6%" },
-  { name: "Care Gap", runtime: "174 ms", cost: "$0.011", success: "98.9%" },
-  { name: "Recommendation", runtime: "192 ms", cost: "$0.014", success: "99.2%" },
-  { name: "Copilot", runtime: "412 ms", cost: "$0.027", success: "97.8%" },
-];
-
-const promptVariants = [
-  {
-    version: "Prompt A",
-    description: "Prioritize concise explanations with evidence-first formatting.",
-    metrics: "Cost $0.021 · Latency 328 ms",
-  },
-  {
-    version: "Prompt B",
-    description: "More verbose, clinician-friendly explanations with workflow context.",
-    metrics: "Cost $0.029 · Latency 412 ms",
-  },
-];
-
-const recentPatients = [
-  { id: "104", name: "Maria Thompson", risk: 92, gaps: 4, recommendation: "Schedule outreach within 24h" },
-  { id: "228", name: "Andre Johnson", risk: 86, gaps: 2, recommendation: "Care manager review" },
-  { id: "417", name: "Priya Patel", risk: 78, gaps: 3, recommendation: "Close preventive screening gaps" },
-];
+import {
+  agentHealth,
+  overviewMetrics,
+  promptVariants,
+  recentPatients,
+  workflowSteps,
+} from "@/lib/mock-data";
 
 export default function Home() {
   return (
@@ -73,6 +22,17 @@ export default function Home() {
             <h1 className="mt-1 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               Multi-agent healthcare intelligence with full workflow observability.
             </h1>
+            <div className="mt-4 flex flex-wrap gap-3 text-sm text-slate-200/90">
+              <Link className="rounded-full border border-white/10 bg-white/5 px-4 py-2 transition hover:bg-white/10" href="/patients">
+                Patients
+              </Link>
+              <Link className="rounded-full border border-white/10 bg-white/5 px-4 py-2 transition hover:bg-white/10" href="/workflows">
+                Workflows
+              </Link>
+              <Link className="rounded-full border border-white/10 bg-white/5 px-4 py-2 transition hover:bg-white/10" href="/agents">
+                Agents
+              </Link>
+            </div>
           </div>
           <div className="flex flex-wrap gap-3 text-sm text-slate-200/90">
             <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5">FastAPI ready</span>

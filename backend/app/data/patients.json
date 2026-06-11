@@ -40,5 +40,110 @@
     "riskScore": 78,
     "openGaps": 3,
     "recommendation": "Close preventive screening gaps"
+  },
+  {
+    "id": "104",
+    "name": "Maria Thompson",
+    "riskScore": 92,
+    "openGaps": 4,
+    "recommendation": "Schedule outreach within 24h"
+  },
+  {
+    "id": "228",
+    "name": "Andre Johnson",
+    "riskScore": 86,
+    "openGaps": 2,
+    "recommendation": "Care manager review"
+  },
+  {
+    "id": "417",
+    "name": "Priya Patel",
+    "riskScore": 78,
+    "openGaps": 3,
+    "recommendation": "Close preventive screening gaps"
+  },
+  {
+    "id": "104",
+    "name": "Maria Thompson",
+    "riskScore": 92,
+    "openGaps": 4,
+    "recommendation": "Schedule outreach within 24h"
+  },
+  {
+    "id": "228",
+    "name": "Andre Johnson",
+    "riskScore": 86,
+    "openGaps": 2,
+    "recommendation": "Care manager review"
+  },
+  {
+    "id": "417",
+    "name": "Priya Patel",
+    "riskScore": 78,
+    "openGaps": 3,
+    "recommendation": "Close preventive screening gaps"
+  },
+  {
+    "id": "104",
+    "name": "Maria Thompson",
+    "riskScore": 92,
+    "openGaps": 4,
+    "recommendation": "Schedule outreach within 24h"
+  },
+  {
+    "id": "228",
+    "name": "Andre Johnson",
+    "riskScore": 86,
+    "openGaps": 2,
+    "recommendation": "Care manager review"
+  },
+  {
+    "id": "417",
+    "name": "Priya Patel",
+    "riskScore": 78,
+    "openGaps": 3,
+    "recommendation": "Close preventive screening gaps"
+  },
+  {
+    "id": "104",
+    "name": "Maria Thompson",
+    "riskScore": 92,
+    "openGaps": 4,
+    "recommendation": "Schedule outreach within 24h"
+  },
+  {
+    "id": "228",
+    "name": "Andre Johnson",
+    "riskScore": 86,
+    "openGaps": 2,
+    "recommendation": "Care manager review"
+  },
+  {
+    "id": "417",
+    "name": "Priya Patel",
+    "riskScore": 78,
+    "openGaps": 3,
+    "recommendation": "Close preventive screening gaps"
+  },
+  {
+    "id": "104",
+    "name": "Maria Thompson",
+    "riskScore": 92,
+    "openGaps": 4,
+    "recommendation": "Schedule outreach within 24h"
+  },
+  {
+    "id": "228",
+    "name": "Andre Johnson",
+    "riskScore": 86,
+    "openGaps": 2,
+    "recommendation": "Care manager review"
+  },
+  {
+    "id": "417",
+    "name": "Priya Patel",
+    "riskScore": 78,
+    "openGaps": 3,
+    "recommendation": "Close preventive screening gaps"
   }
 ]

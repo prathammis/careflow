@@ -8,8 +8,21 @@ from fastapi import Body
 from datetime import datetime
 
 from . import storage
+from .telemetry import setup_opentelemetry
+from .db import init_db
 
 app = FastAPI(title="CareFlow Nexus API", version="0.1.0")
+
+# initialize observability and DB for local dev (best-effort)
+try:
+    _tracer = setup_opentelemetry()
+except Exception:
+    _tracer = None
+
+try:
+    init_db()
+except Exception:
+    pass
 
 app.add_middleware(
     CORSMiddleware,

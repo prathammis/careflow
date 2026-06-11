@@ -28,7 +28,10 @@ export default function RunAgentButton() {
         body: JSON.stringify(payload),
       });
       if (res.ok) {
-        router.push("/traces");
+        const data = await res.json();
+        const id = data.id;
+        if (id) router.push(`/traces/${id}`);
+        else router.push("/traces");
       } else {
         console.error("create trace failed", await res.text());
         setLoading(false);

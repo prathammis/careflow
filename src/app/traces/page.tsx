@@ -7,9 +7,21 @@ const statusTone: Record<string, string> = {
 };
 
 export default async function TracesPage() {
-  const res = await fetch("http://localhost:8000/api/traces", { cache: "no-store" });
-  const data = await res.json();
-  const runs = (data.items || []).map((run: any) => ({
+  let runsData: any[] = [];
+  let fetchError: string | null = null;
+  try {
+    const res = await fetch("http://localhost:8000/api/traces", { cache: "no-store" });
+    if (res.ok) {
+      const data = await res.json();
+      runsData = data.items || [];
+    } else {
+      fetchError = `backend returned ${res.status}`;
+    }
+  } catch (err: any) {
+    fetchError = String(err?.message || err);
+  }
+
+  const runs = (runsData || []).map((run: any) => ({
     id: run.id,
     runLabel: run.id,
     workflow: run.workflow || run.agent || "Workflow",
@@ -42,6 +54,12 @@ export default async function TracesPage() {
             </Link>
           </div>
         </header>
+
+        {fetchError ? (
+          <div className="rounded-2xl border border-rose-400/20 bg-rose-900/30 p-4 text-sm text-rose-200">
+            Error fetching traces: {fetchError}
+          </div>
+        ) : null}
 
         <section className="grid gap-4">
           {runs.map((run) => (

@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from .agents.openai_client import generate as openai_generate
 from .redis_client import client as redis_client
 import json
+from .ml.model_zoo import xgboost_example, lightgbm_example, train_logistic_dummy
 
 app = FastAPI(title="CareFlow Nexus API", version="0.1.0")
 
@@ -182,6 +183,20 @@ def get_workflow_trace() -> dict[str, list[dict[str, Any]]]:
 @app.get("/api/prompts")
 def get_prompts() -> dict[str, list[dict[str, Any]]]:
     return {"items": PROMPTS}
+
+
+@app.get("/api/ml/info")
+def ml_info() -> dict[str, Any]:
+    return {"xgboost": xgboost_example(), "lightgbm": lightgbm_example()}
+
+
+@app.post("/api/ml/train/logistic")
+def ml_train_logistic() -> dict[str, Any]:
+    m = train_logistic_dummy()
+    if isinstance(m, dict) and m.get("error"):
+        return {"ok": False, "error": m.get("error")}
+    # return a small summary
+    return {"ok": True, "model_type": type(m).__name__}
 
 
 class AgentRunRequest(BaseModel):

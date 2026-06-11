@@ -138,7 +138,11 @@ def get_patients() -> dict[str, list[dict[str, Any]]]:
 @app.post("/api/upload")
 def upload_patients(rows: List[Dict[str, Any]] = Body(...)) -> dict[str, Any]:
     """Accept parsed CSV rows (JSON array of objects) and add them to the in-memory store."""
-    added = storage.add_patients(rows)
+    if _tracer:
+        with _tracer.start_as_current_span("patients.upload"):
+            added = storage.add_patients(rows)
+    else:
+        added = storage.add_patients(rows)
     return {"added": added, "total": len(storage.get_patients())}
 
 
@@ -150,12 +154,21 @@ def get_traces() -> dict[str, list[dict[str, Any]]]:
 @app.post("/api/traces")
 def create_trace(run: Dict[str, Any] = Body(...)) -> dict[str, Any]:
     """Create a new trace run entry in the in-memory store and return its id."""
-    traces = storage.get_traces()
-    trace_id = run.get("id") or f"trace-{len(traces) + 1:04d}"
-    run["id"] = trace_id
-    run.setdefault("events", [])
-    run["createdAt"] = datetime.utcnow().isoformat() + "Z"
-    storage.append_trace(run)
+    if _tracer:
+        with _tracer.start_as_current_span("trace.create"):
+            traces = storage.get_traces()
+            trace_id = run.get("id") or f"trace-{len(traces) + 1:04d}"
+            run["id"] = trace_id
+            run.setdefault("events", [])
+            run["createdAt"] = datetime.utcnow().isoformat() + "Z"
+            storage.append_trace(run)
+    else:
+        traces = storage.get_traces()
+        trace_id = run.get("id") or f"trace-{len(traces) + 1:04d}"
+        run["id"] = trace_id
+        run.setdefault("events", [])
+        run["createdAt"] = datetime.utcnow().isoformat() + "Z"
+        storage.append_trace(run)
     return {"id": trace_id, "total": len(storage.get_traces())}
 
 
@@ -181,5 +194,9 @@ def run_agent(req: AgentRunRequest) -> dict[str, Any]:
     If OpenAI is not configured or package missing, the wrapper returns
     an error dict which is forwarded to the caller.
     """
-    resp = openai_generate(req.prompt, model=req.model or "gpt-4o-mini")
+    if _tracer:
+        with _tracer.start_as_current_span("agent.openai.call"):
+            resp = openai_generate(req.prompt, model=req.model or "gpt-4o-mini")
+    else:
+        resp = openai_generate(req.prompt, model=req.model or "gpt-4o-mini")
     return {"ok": True, "result": resp}

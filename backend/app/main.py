@@ -10,6 +10,8 @@ from datetime import datetime
 from . import storage
 from .telemetry import setup_opentelemetry
 from .db import init_db
+from pydantic import BaseModel
+from .agents.openai_client import generate as openai_generate
 
 app = FastAPI(title="CareFlow Nexus API", version="0.1.0")
 
@@ -165,3 +167,19 @@ def get_workflow_trace() -> dict[str, list[dict[str, Any]]]:
 @app.get("/api/prompts")
 def get_prompts() -> dict[str, list[dict[str, Any]]]:
     return {"items": PROMPTS}
+
+
+class AgentRunRequest(BaseModel):
+    prompt: str
+    model: str | None = None
+
+
+@app.post("/api/agents/run")
+def run_agent(req: AgentRunRequest) -> dict[str, Any]:
+    """Run a simple OpenAI prompt via the `openai_client` wrapper.
+
+    If OpenAI is not configured or package missing, the wrapper returns
+    an error dict which is forwarded to the caller.
+    """
+    resp = openai_generate(req.prompt, model=req.model or "gpt-4o-mini")
+    return {"ok": True, "result": resp}

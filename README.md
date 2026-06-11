@@ -73,3 +73,36 @@ These are starter scaffolds and include safe fallbacks when packages are not ins
 pip install -r backend/requirements.txt
 ```
 
+**Technology Used**
+- **Frontend:** Next.js (App Router), React, TypeScript, TailwindCSS
+- **Backend:** FastAPI, Uvicorn
+- **Machine Learning:** scikit-learn, XGBoost, LightGBM (demo stubs in `backend/app/ml`)
+- **AI / LLMs:** OpenAI (`backend/app/agents/openai_client.py`) — requires `OPENAI_API_KEY`
+- **Orchestration:** LangGraph (stubbed as `backend/app/agents/langgraph_stub.py`)
+- **Database:** SQLModel (Postgres-ready via `DATABASE_URL`), sqlite fallback (`backend/app/dev.db`)
+- **Cache / Queue:** Redis client scaffold (`backend/app/redis_client.py`) — `REDIS_URL`
+- **Observability:** OpenTelemetry scaffold (`backend/app/telemetry.py`) with OTLP exporter
+- **Tracing / Observability UI:** In-app trace store (prototype) at `src/app/traces` backed by `backend/app/storage.py`
+
+**Environment variables**
+- `OPENAI_API_KEY` — OpenAI API key for agent demos
+- `DATABASE_URL` — SQLModel database URL (e.g. `postgres+psycopg://user:pass@host:5432/db`); defaults to `sqlite:///./dev.db`
+- `REDIS_URL` — Redis connection string (defaults to `redis://localhost:6379/0`)
+- OTLP exporter env vars — configure OTLP endpoint if using tracing collector
+
+**Enabling integrations (quick)**
+- Install backend deps:
+	```bash
+	pip install -r backend/requirements.txt
+	```
+- Start backend (creates DB tables if `sqlmodel` available):
+	```bash
+	python -m uvicorn backend.app.main:app --reload --port 8000
+	```
+- To enable OpenAI flows: set `OPENAI_API_KEY` and POST to `/api/agents/run` or use the UI once wired.
+- To use Postgres: set `DATABASE_URL` and restart backend (tables created by `init_db()` at startup).
+- To enable Redis caching: set `REDIS_URL` and call `/api/cache/set` and `/api/cache/{key}`.
+- To collect traces: run an OTLP collector and configure environment variables for the exporter; basic spans are created by the backend when `telemetry` initializes.
+
+If you want, I can add migration scripts (Alembic) and example UI controls for these integrations — tell me which to prioritize.
+

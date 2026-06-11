@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { agentFailures, agentHealth, promptVariants } from "@/lib/mock-data";
+import RunAgentButton from "@/components/run-agent-button";
 
 export default function AgentsPage() {
   return (
@@ -15,12 +16,15 @@ export default function AgentsPage() {
                 Demo monitoring views for runtime, cost, success rate, and prompt A/B comparisons.
               </p>
             </div>
-            <Link
-              href="/traces"
-              className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10"
-            >
-              Open trace store
-            </Link>
+            <div className="flex items-center">
+              <Link
+                href="/traces"
+                className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200 transition hover:bg-white/10"
+              >
+                Open trace store
+              </Link>
+              <RunAgentButton />
+            </div>
           </div>
         </header>
 

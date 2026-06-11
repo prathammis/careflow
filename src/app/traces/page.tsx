@@ -1,14 +1,27 @@
 import Link from "next/link";
 
-import { traceRuns } from "@/lib/mock-data";
-
 const statusTone: Record<string, string> = {
   success: "text-emerald-200 bg-emerald-400/10",
   warning: "text-amber-200 bg-amber-400/10",
   failed: "text-rose-200 bg-rose-400/10",
 };
 
-export default function TracesPage() {
+export default async function TracesPage() {
+  const res = await fetch("http://localhost:8000/api/traces", { cache: "no-store" });
+  const data = await res.json();
+  const runs = (data.items || []).map((run: any) => ({
+    id: run.id,
+    runLabel: run.id,
+    workflow: run.workflow || run.agent || "Workflow",
+    agent: run.agent || "agent",
+    status: run.status || "success",
+    latency: run.runtimeMs ? `${run.runtimeMs}ms` : "-",
+    cost: run.costUsd ? `$${Number(run.costUsd).toFixed(3)}` : "-",
+    prompt: run.prompt || "",
+    inputData: run.inputData || JSON.stringify(run.input || {}),
+    output: run.output || "",
+  }));
+
   return (
     <main className="min-h-screen bg-[#071119] px-6 py-8 text-slate-100 sm:px-8 lg:px-10">
       <div className="mx-auto max-w-7xl space-y-6">
@@ -31,7 +44,7 @@ export default function TracesPage() {
         </header>
 
         <section className="grid gap-4">
-          {traceRuns.map((run) => (
+          {runs.map((run) => (
             <Link
               key={run.id}
               href={`/traces/${run.id}`}

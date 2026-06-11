@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Body
+from datetime import datetime
 
 from . import storage
 
@@ -129,6 +130,18 @@ def upload_patients(rows: List[Dict[str, Any]] = Body(...)) -> dict[str, Any]:
 @app.get("/api/traces")
 def get_traces() -> dict[str, list[dict[str, Any]]]:
     return {"items": storage.get_traces()}
+
+
+@app.post("/api/traces")
+def create_trace(run: Dict[str, Any] = Body(...)) -> dict[str, Any]:
+    """Create a new trace run entry in the in-memory store and return its id."""
+    traces = storage.get_traces()
+    trace_id = run.get("id") or f"trace-{len(traces) + 1:04d}"
+    run["id"] = trace_id
+    run.setdefault("events", [])
+    run["createdAt"] = datetime.utcnow().isoformat() + "Z"
+    storage.append_trace(run)
+    return {"id": trace_id, "total": len(storage.get_traces())}
 
 
 @app.get("/api/workflows/trace")

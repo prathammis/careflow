@@ -12,6 +12,8 @@ from .telemetry import setup_opentelemetry
 from .db import init_db
 from pydantic import BaseModel
 from .agents.openai_client import generate as openai_generate
+from .redis_client import client as redis_client
+import json
 
 app = FastAPI(title="CareFlow Nexus API", version="0.1.0")
 
@@ -185,6 +187,38 @@ def get_prompts() -> dict[str, list[dict[str, Any]]]:
 class AgentRunRequest(BaseModel):
     prompt: str
     model: str | None = None
+
+
+class CacheSet(BaseModel):
+    key: str
+    value: dict | list | str | int | float | None = None
+
+
+@app.post("/api/cache/set")
+def cache_set(req: CacheSet) -> dict[str, Any]:
+    if redis_client:
+        try:
+            redis_client.set(req.key, json.dumps(req.value))
+            return {"ok": True}
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
+    return {"ok": False, "error": "redis not configured"}
+
+
+@app.get("/api/cache/{key}")
+def cache_get(key: str) -> dict[str, Any]:
+    if redis_client:
+        try:
+            v = redis_client.get(key)
+            if v is None:
+                return {"key": key, "value": None}
+            try:
+                return {"key": key, "value": json.loads(v)}
+            except Exception:
+                return {"key": key, "value": v.decode()}
+        except Exception as e:
+            return {"key": key, "error": str(e)}
+    return {"key": key, "error": "redis not configured"}
 
 
 @app.post("/api/agents/run")

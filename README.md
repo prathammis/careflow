@@ -48,15 +48,10 @@ Important files
 - `backend/app/storage.py` — demo persistence layer (reads/writes JSON under `backend/app/data/`)
 
 Notes & next steps
-- This is a demo prototype. JSON-file persistence is suitable for local testing only — migrate to Postgres or another DB for real workloads.
+- This is a prototype. JSON-file persistence is suitable for local testing only — migrate to Postgres or another DB for real workloads.
 - To make agent runs richer, add structured `events` and expand the trace detail page to render timelines and tool calls.
 - If you'd like, I can scaffold SQL persistence with `sqlmodel` + migrations, or wire additional pages to the backend APIs.
 
 Troubleshooting
 - If `uvicorn` is not found, install dependencies and run using `python -m uvicorn ...` as shown above.
 - Backend data is stored in `backend/app/data/`; remove that folder to reset persisted demo data.
-
-License
-- Prototype code for internal development. Add a license file if you plan to publish.
-
-Happy hacking — tell me which next step you'd like me to take.

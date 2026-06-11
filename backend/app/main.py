@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Dict, List
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Body
+
+from . import storage
 
 app = FastAPI(title="CareFlow Nexus API", version="0.1.0")
 
@@ -46,6 +49,9 @@ PATIENTS: list[dict[str, Any]] = [
         "recommendation": "Close preventive screening gaps",
     },
 ]
+
+# initialize storage with demo patients
+storage.add_patients(PATIENTS)
 
 WORKFLOW_TRACE = [
     {
@@ -110,7 +116,19 @@ def get_overview() -> dict[str, Any]:
 
 @app.get("/api/patients")
 def get_patients() -> dict[str, list[dict[str, Any]]]:
-    return {"items": PATIENTS}
+    return {"items": storage.get_patients()}
+
+
+@app.post("/api/upload")
+def upload_patients(rows: List[Dict[str, Any]] = Body(...)) -> dict[str, Any]:
+    """Accept parsed CSV rows (JSON array of objects) and add them to the in-memory store."""
+    added = storage.add_patients(rows)
+    return {"added": added, "total": len(storage.get_patients())}
+
+
+@app.get("/api/traces")
+def get_traces() -> dict[str, list[dict[str, Any]]]:
+    return {"items": storage.get_traces()}
 
 
 @app.get("/api/workflows/trace")

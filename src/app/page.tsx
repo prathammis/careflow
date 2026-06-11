@@ -61,6 +61,22 @@ export default function Home() {
     const text = await file.text();
     const preview = parseCsv(text);
 
+    // parse full rows to send to backend
+    const lines = text
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter(Boolean);
+
+    const headers = lines[0]?.split(",").map((h) => h.trim()).filter(Boolean) ?? [];
+
+    const rows = lines.slice(1).map((line) => {
+      const values = line.split(",");
+      return headers.reduce<Record<string, string>>((row, header, index) => {
+        row[header] = (values[index] ?? "").trim();
+        return row;
+      }, {});
+    });
+
     if (!preview) {
       setUploadPreview(null);
       setUploadStatus("The CSV needs a header row and at least one data row.");
@@ -69,6 +85,26 @@ export default function Home() {
 
     setUploadPreview({ ...preview, fileName: file.name });
     setUploadStatus(`Loaded ${preview.rowCount} rows from ${file.name}`);
+
+    // send parsed rows to backend API (local dev server)
+    try {
+      const resp = await fetch("http://localhost:8000/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(rows),
+      });
+
+      if (!resp.ok) {
+        const txt = await resp.text();
+        setUploadStatus(`Upload failed: ${resp.status} ${txt}`);
+        return;
+      }
+
+      const payload = await resp.json();
+      setUploadStatus(`Uploaded ${payload.added} rows — total ${payload.total}`);
+    } catch (err) {
+      setUploadStatus(`Upload error: ${String(err)}`);
+    }
   }
 
   return (

@@ -39,14 +39,6 @@ Key features (prototype)
 - Trace Store: list and inspect mock agent runs created by the `Run Agent` button.
 - Run Agent mock UI: triggers a synthetic agent execution and persists a trace to `backend/app/data/traces.json`.
 
-Important files
-- `src/app/` — Next.js App Router pages and components (frontend UI)
-- `src/lib/mock-data.ts` — mock datasets used during development
-- `src/components/run-agent-button.tsx` — client button to create mock traces
-- `src/app/traces/page.tsx` — traces listing (now fetches `/api/traces`)
-- `backend/app/main.py` — FastAPI application and API routes
-- `backend/app/storage.py` — demo persistence layer (reads/writes JSON under `backend/app/data/`)
-
 Notes & next steps
 - This is a prototype. JSON-file persistence is suitable for local testing only — migrate to Postgres or another DB for real workloads.
 - To make agent runs richer, add structured `events` and expand the trace detail page to render timelines and tool calls.
@@ -55,23 +47,6 @@ Notes & next steps
 Troubleshooting
 - If `uvicorn` is not found, install dependencies and run using `python -m uvicorn ...` as shown above.
 - Backend data is stored in `backend/app/data/`; remove that folder to reset persisted demo data.
-
-Added scaffolding
------------------
-I added lightweight scaffolds for several integrations under `backend/app/` to make it easy to enable them at a basic level:
-
-- `backend/app/db.py`: SQLModel-based DB scaffold (`init_db()` creates tables). Set `DATABASE_URL` to use Postgres.
-- `backend/app/redis_client.py`: Redis client wrapper (reads `REDIS_URL`).
-- `backend/app/telemetry.py`: OpenTelemetry setup (OTLP exporter).
-- `backend/app/agents/openai_client.py`: Minimal OpenAI wrapper (reads `OPENAI_API_KEY`).
-- `backend/app/agents/langgraph_stub.py`: Local stub for orchestration workflows.
-- `backend/app/ml/model_zoo.py`: Tiny sklearn/xgboost/lightgbm demo helpers.
-
-These are starter scaffolds and include safe fallbacks when packages are not installed. To enable them fully, install the updated backend requirements and set environment variables as needed:
-
-```bash
-pip install -r backend/requirements.txt
-```
 
 **Technology Used**
 - **Frontend:** Next.js (App Router), React, TypeScript, TailwindCSS
